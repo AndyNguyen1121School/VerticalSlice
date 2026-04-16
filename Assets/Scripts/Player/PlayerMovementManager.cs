@@ -1,0 +1,153 @@
+﻿using System;
+using UnityEngine;
+using UnityEngine.Serialization;
+
+namespace Player
+{
+    public class PlayerMovementManager : MonoBehaviour
+    {
+        private PlayerManager _playerManager;
+        
+        [FormerlySerializedAs("walkSpeed")]
+        [Header("Movement Attributes")] 
+        [SerializeField] private float walkAcceleration = 5f;
+        [SerializeField] private float decelerationAcceleration = 5f;
+        [SerializeField] private float speedCap = 20f;
+        [SerializeField] private float jumpHeight = 1f;
+        [SerializeField] private float sprintSpeed = 12f;
+        [SerializeField] private float gravity = -9.81f;
+        
+        private float _velocityY;
+        private Vector3 _velocityXZ;
+
+        [Header("Ground Check")] 
+        [SerializeField] private float groundCheckRadius;
+        [SerializeField] private Vector3 groundCheckOffset;
+        [SerializeField] private LayerMask groundLayer;
+
+        private float _pitch;
+        private float _yaw;
+        [SerializeField]private float minPitch;
+        [SerializeField] private float maxPitch;
+
+        public float HorizontalVelocity => _velocityXZ.magnitude;
+
+        public event Action<float> onSpeedChanged;
+
+        private void Awake()
+        {
+            _playerManager = GetComponent<PlayerManager>();
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+            HandleMovement();
+            HandleRotation();
+        }
+
+        private void HandleMovement()
+        {
+            Vector2 cachedInputDirection = _playerManager.InputManager.MovementInput;
+            Camera cachedCamera = _playerManager.Camera;
+            
+            if (cachedInputDirection != Vector2.zero)
+            {
+                Vector3 cameraFlatForwardDir = cachedCamera.transform.forward;
+                cameraFlatForwardDir.y = 0;
+                cameraFlatForwardDir.Normalize();
+
+                Vector3 cameraFlatRightDir = cachedCamera.transform.right;
+                cameraFlatRightDir.y = 0;
+                cameraFlatRightDir.Normalize();
+                
+                Vector3 moveDir = cameraFlatForwardDir * cachedInputDirection.y
+                                  + cameraFlatRightDir * cachedInputDirection.x;
+                moveDir.Normalize();
+
+                // limit speed
+                float currentSpeed = _velocityXZ.magnitude >= speedCap ? speedCap : _velocityXZ.magnitude;
+                
+                // keep momentum when switching direction
+                _velocityXZ = currentSpeed * moveDir;
+                _velocityXZ += moveDir * (walkAcceleration * Time.deltaTime);
+            }
+            else
+            {
+                _velocityXZ = Vector3.Lerp(_velocityXZ, Vector3.zero, decelerationAcceleration * Time.deltaTime);
+            }
+
+            if (!IsGrounded())
+            {
+                // adjust for gravity
+                _velocityY += gravity * Time.deltaTime;
+            }
+            else
+            {
+                _velocityY = 0;
+            }
+
+            if (_playerManager.InputManager.jumpInput)
+            {
+                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity));
+            }
+
+            Vector3 moveVelocity = _velocityXZ;
+            moveVelocity.y = _velocityY;
+            
+            _playerManager.CharacterController.Move(moveVelocity * Time.deltaTime);
+
+            if (moveVelocity != Vector3.zero)
+            {
+                onSpeedChanged?.Invoke(_velocityXZ.magnitude);
+            }
+        }
+
+        private void HandleRotation()
+        {
+            if (_playerManager.InputManager.MouseInput == Vector2.zero)
+                return;
+
+            Vector2 input = _playerManager.InputManager.MouseInput;
+
+            _yaw += input.x * _playerManager.InputManager.sensitivity;
+            _pitch -= input.y * _playerManager.InputManager.sensitivity;
+            _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
+
+            transform.rotation = Quaternion.Euler(0, _yaw, 0f);
+            _playerManager.CameraTarget.localRotation = Quaternion.Euler(_pitch, 0f, 0f); 
+        }
+
+        private void LaunchCharacter(Vector3 velocity, bool overrideXZ = false, bool overrideY = false)
+        {
+            if (overrideXZ)
+            {
+                _velocityXZ = new Vector3(velocity.x, 0, velocity.z);
+            }
+            else
+            {
+                _velocityXZ += new Vector3(velocity.x, 0, velocity.z);
+            }
+
+            if (overrideY)
+            {
+                _velocityY = velocity.y;
+            }
+            else
+            {
+                _velocityY += velocity.y;
+            }
+        }
+
+        public bool IsGrounded()
+        {
+            return Physics.OverlapSphere(transform.position + groundCheckOffset, groundCheckRadius, groundLayer).Length > 0;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position + groundCheckOffset, groundCheckRadius);
+        }
+    }
+}
