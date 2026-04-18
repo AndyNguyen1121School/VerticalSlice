@@ -1,4 +1,5 @@
 ﻿using System;
+using Player;
 using ScriptableObjects;
 using UnityEngine;
 using Weapons.Bullet;
@@ -9,7 +10,15 @@ namespace Weapons
 {
     public class Gun : Weapon
     {
-        [SerializeField] private GunData gunData;
+        [SerializeField] protected GunData gunData;
+        [SerializeField] protected bool _canPush = false;
+        private float timeSinceLastShot;
+
+        private void OnEnable()
+        {
+            timeSinceLastShot = 1 / gunData.fireRate;
+        }
+
         private void Awake()
         {
             if (gunData != null)
@@ -22,15 +31,18 @@ namespace Weapons
             }
         }
 
-        public override void Start()
+        private void Update()
         {
-            base.Start();
-            playerManager.InputManager.OnAttackPerformed += Attack;
-            playerManager.InputManager.OnAttackCanceled += AttackCanceled;
+            timeSinceLastShot += Time.deltaTime;
         }
 
-        public override void Attack()
+        public override void Attack(PlayerWeaponManager playerWeaponManager)
         {
+            if (timeSinceLastShot <  1 / gunData.fireRate)
+                return;
+
+            timeSinceLastShot = 0;
+            
             for (int i = 0; i < gunData.bulletCount; ++i)
             {
                 Vector3 randomSpread = GetSpreadDirection();
@@ -39,17 +51,40 @@ namespace Weapons
                 BulletManager bullet = Instantiate(playerManager.BulletPrefab, playerManager.WeaponManager.gunTip.position, spawnDirection).GetComponent<BulletManager>();
                 bullet.InitializeBulletAttributes(gunData.bulletData);
             }
-            
-            Vector3 finalPushVelocity = -PlayerManager.Instance.Camera.transform.forward * gunData.pushForce;
-            finalPushVelocity.y *= gunData.verticalMultiplier;
-            PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
+
+            if (_canPush)
+            {
+                Vector3 finalPushVelocity = -PlayerManager.Instance.Camera.transform.forward * gunData.pushForce;
+                
+                if (gunData.impulseY)
+                {
+                    finalPushVelocity.y = Mathf.Sqrt(-2 * gunData.verticalForce * playerManager.MovementManager.gravity);
+                }
+                else
+                {
+                    finalPushVelocity.y += gunData.verticalForce;
+                }
+
+                PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
+            }
         }
 
-        public void AttackCanceled()
+        public override void AttackCanceled(PlayerWeaponManager playerWeaponManager)
         {
             
         }
-        
+
+        public override void ActivateSecondary(PlayerWeaponManager playerWeaponManager)
+        {
+            _canPush = true;
+        }
+
+        public override void CancelSecondary(PlayerWeaponManager playerWeaponManager)
+        {
+            _canPush = false;
+            
+        }
+
         private Vector3 GetSpreadDirection()
         {
             Vector3 direction = playerManager.Camera.transform.forward;
@@ -66,6 +101,11 @@ namespace Weapons
             }
 
             return direction;
+        }
+
+        private void OnDisable()
+        {
+            _canPush = false;
         }
     }
 }

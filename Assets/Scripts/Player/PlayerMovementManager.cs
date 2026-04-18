@@ -117,7 +117,7 @@ namespace Player
 
             if (moveVelocity != Vector3.zero)
             {
-                onSpeedChanged?.Invoke(_velocityXZ.magnitude);
+                onSpeedChanged?.Invoke(moveVelocity.magnitude);
             }
         }
 
@@ -145,6 +145,11 @@ namespace Player
             else
             {
                 _velocityXZ += new Vector3(velocity.x, 0, velocity.z);
+            }
+
+            if (_velocityXZ.magnitude > speedCap)
+            {
+                _velocityXZ = _velocityXZ.normalized * speedCap;
             }
 
             if (overrideY)

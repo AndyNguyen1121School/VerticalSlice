@@ -16,9 +16,13 @@ namespace Player
         public Vector2 MovementInput => movementInput;
         public Vector2 MouseInput => mouseInput;
         public bool jumpInput;
+        public bool attackInput;
+        public bool secondaryInput;
 
         [HideInInspector] public event Action OnAttackPerformed;
         [HideInInspector] public event Action OnAttackCanceled;
+        [HideInInspector] public event Action OnSecondaryPerformed;
+        [HideInInspector] public event Action OnSecondaryCanceled;
 
         private void Start()
         {
@@ -39,6 +43,9 @@ namespace Player
             
             PlayerInput.actions["Attack"].performed += HandleAttackPerformed;
             PlayerInput.actions["Attack"].canceled += HandleAttackCanceled;
+            PlayerInput.actions["Secondary"].started += HandleSecondaryStarted;
+            PlayerInput.actions["Secondary"].canceled += HandleSecondaryCanceled;
+            
         }
 
         private void OnDisable()
@@ -49,6 +56,8 @@ namespace Player
             
             PlayerInput.actions["Attack"].performed -= HandleAttackPerformed;
             PlayerInput.actions["Attack"].canceled -= HandleAttackCanceled;
+            PlayerInput.actions["Secondary"].started -= HandleSecondaryStarted;
+            PlayerInput.actions["Secondary"].canceled -= HandleSecondaryCanceled;
         }
 
         private void OnMove(InputAction.CallbackContext ctx)
@@ -66,12 +75,26 @@ namespace Player
         
         private void HandleAttackPerformed(InputAction.CallbackContext ctx)
         {
+            attackInput = true;
             OnAttackPerformed?.Invoke();
         }
 
         private void HandleAttackCanceled(InputAction.CallbackContext ctx)
         {
+            attackInput = false;
             OnAttackCanceled?.Invoke();
+        }
+
+        private void HandleSecondaryStarted(InputAction.CallbackContext ctx)
+        {
+            secondaryInput = true;
+            OnSecondaryPerformed?.Invoke();
+        }
+
+        private void HandleSecondaryCanceled(InputAction.CallbackContext ctx)
+        {
+            secondaryInput = false;
+            OnSecondaryCanceled?.Invoke();
         }
     }
 }

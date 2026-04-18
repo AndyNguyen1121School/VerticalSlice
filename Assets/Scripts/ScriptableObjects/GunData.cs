@@ -11,12 +11,6 @@ namespace ScriptableObjects
         Spread
     }
 
-    public enum PushMode
-    {
-        Force,
-        Impulse
-    }
-
     [Serializable]
     public struct BulletData
     {
@@ -33,10 +27,10 @@ namespace ScriptableObjects
         public float fireRate;
         public int bulletCount;
         public Vector3 spreadVariance;
-        public BulletData bulletData;
         public float pushForce;
-        public float verticalMultiplier = 1f;
-        public PushMode pushMode = PushMode.Force;
+        public float verticalForce;
+        public bool impulseY = false;
+        public BulletData bulletData;
 
     }
 }

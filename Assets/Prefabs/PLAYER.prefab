@@ -347,6 +347,8 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0}
   mouseInput: {x: 0, y: 0}
   jumpInput: 0
+  attackInput: 0
+  secondaryInput: 0
 --- !u!114 &2713142732182271760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,19 +361,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1533c455d8a94c4a803a74303e40e9c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkAcceleration: 10
-  decelerationAcceleration: 5
-  speedCap: 20
+  walkAcceleration: 5
+  deceleration: 2
+  airDeceleration: 0.1
+  minSpeed: 10
+  speedCap: 50
   jumpHeight: 3
   sprintSpeed: 12
-  gravity: -20
+  gravity: -40
+  _velocityY: 0
+  _velocityXZ: {x: 0, y: 0, z: 0}
   groundCheckRadius: 0.38
   groundCheckOffset: {x: 0, y: -0.7, z: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
-  minPitch: -70
-  maxPitch: 70
+  minPitch: -85
+  maxPitch: 85
 --- !u!114 &2820736890387483457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -416,7 +422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Weapons:
-  - {fileID: 125788217295009233}
+  - {fileID: 8967069450933714204}
   currentWeapon: {fileID: 0}
   gunTip: {fileID: 1049732239063446787}
 --- !u!1 &3501922097369533066
@@ -728,7 +734,7 @@ Transform:
   m_GameObject: {fileID: 7608983990785086964}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.55}
+  m_LocalPosition: {x: 0, y: 0, z: 0.797}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -745,7 +751,7 @@ GameObject:
   - component: {fileID: 2977666011501894101}
   - component: {fileID: 7321765577792818620}
   - component: {fileID: 1634941428020692003}
-  - component: {fileID: 125788217295009233}
+  - component: {fileID: 8967069450933714204}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -762,7 +768,7 @@ Transform:
   m_GameObject: {fileID: 7723869236240657659}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3693, y: -0.3731, z: 0.655}
+  m_LocalPosition: {x: 0.307, y: -0.363, z: 0.655}
   m_LocalScale: {x: 0.26147735, y: 0.2538648, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -819,7 +825,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &125788217295009233
+--- !u!114 &8967069450933714204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -828,7 +834,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7723869236240657659}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8f105887c584a7fb986229c77b3b781, type: 3}
+  m_Script: {fileID: 11500000, guid: ab05c099c7ac4094a037eda0f3f46e61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gunData: {fileID: 11400000, guid: ef93f4ea7d5928f45b6839189d03f98b, type: 2}
+  _canPush: 0

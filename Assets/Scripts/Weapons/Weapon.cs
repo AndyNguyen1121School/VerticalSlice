@@ -1,4 +1,5 @@
 ﻿using System;
+using Player;
 using UnityEngine;
 
 namespace Weapons
@@ -13,6 +14,10 @@ namespace Weapons
             playerManager= PlayerManager.Instance;
         }
 
-        public abstract void Attack();
+        public abstract void Attack(PlayerWeaponManager playerWeaponManager);
+        public abstract void AttackCanceled(PlayerWeaponManager playerWeaponManager);
+
+        public abstract void ActivateSecondary(PlayerWeaponManager playerWeaponManager);
+        public abstract void CancelSecondary(PlayerWeaponManager playerWeaponManager);
     }
 }
