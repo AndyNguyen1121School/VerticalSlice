@@ -1,7 +1,6 @@
 ﻿using System;
 using TMPro;
 using Unity.VisualScripting;
-using Unity.UI;
 using UnityEngine;
 
 namespace UI

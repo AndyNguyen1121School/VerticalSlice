@@ -17,6 +17,9 @@ namespace Player
         public Vector2 MouseInput => mouseInput;
         public bool jumpInput;
 
+        [HideInInspector] public event Action OnAttackPerformed;
+        [HideInInspector] public event Action OnAttackCanceled;
+
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -33,6 +36,9 @@ namespace Player
             PlayerInput.actions["Move"].performed += OnMove;
             PlayerInput.actions["Move"].canceled += OnMoveCanceled;
             PlayerInput.actions["Look"].performed += OnLook;
+            
+            PlayerInput.actions["Attack"].performed += HandleAttackPerformed;
+            PlayerInput.actions["Attack"].canceled += HandleAttackCanceled;
         }
 
         private void OnDisable()
@@ -40,6 +46,9 @@ namespace Player
             PlayerInput.actions["Move"].performed -= OnMove;
             PlayerInput.actions["Move"].canceled -= OnMoveCanceled;
             PlayerInput.actions["Look"].performed -= OnLook;
+            
+            PlayerInput.actions["Attack"].performed -= HandleAttackPerformed;
+            PlayerInput.actions["Attack"].canceled -= HandleAttackCanceled;
         }
 
         private void OnMove(InputAction.CallbackContext ctx)
@@ -55,5 +64,14 @@ namespace Player
             mouseInput = ctx.ReadValue<Vector2>();
         }
         
+        private void HandleAttackPerformed(InputAction.CallbackContext ctx)
+        {
+            OnAttackPerformed?.Invoke();
+        }
+
+        private void HandleAttackCanceled(InputAction.CallbackContext ctx)
+        {
+            OnAttackCanceled?.Invoke();
+        }
     }
 }
