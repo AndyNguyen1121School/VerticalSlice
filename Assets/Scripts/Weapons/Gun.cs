@@ -39,6 +39,10 @@ namespace Weapons
                 BulletManager bullet = Instantiate(playerManager.BulletPrefab, playerManager.WeaponManager.gunTip.position, spawnDirection).GetComponent<BulletManager>();
                 bullet.InitializeBulletAttributes(gunData.bulletData);
             }
+            
+            Vector3 finalPushVelocity = -PlayerManager.Instance.Camera.transform.forward * gunData.pushForce;
+            finalPushVelocity.y *= gunData.verticalMultiplier;
+            PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
         }
 
         public void AttackCanceled()

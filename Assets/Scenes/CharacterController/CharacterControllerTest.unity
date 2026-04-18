@@ -735,6 +735,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1049732239063446787, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.797
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: gravity
+      value: -40
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: minSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: speedCap
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: deceleration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: walkAcceleration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713142732182271760, guid: 4655a19774e2cb94d92212f709eb0bc2,
+        type: 3}
+      propertyPath: decelerationAcceleration
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2977666011501894101, guid: 4655a19774e2cb94d92212f709eb0bc2,
         type: 3}
       propertyPath: m_LocalPosition.x

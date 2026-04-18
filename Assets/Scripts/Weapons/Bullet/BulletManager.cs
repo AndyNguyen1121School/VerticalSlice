@@ -15,7 +15,7 @@ namespace Weapons.Bullet
         public void InitializeBulletAttributes(BulletData bulletData)
         {
             _damage = bulletData.damage;
-            _speed = bulletData.bulletSpeed;
+            _speed = bulletData.bulletSpeed + PlayerManager.Instance.MovementManager.HorizontalVelocity * 1.5f;
             trail.startColor = bulletData.trailColor;
         }
 

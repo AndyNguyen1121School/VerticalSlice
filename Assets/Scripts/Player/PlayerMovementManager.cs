@@ -11,14 +11,16 @@ namespace Player
         [FormerlySerializedAs("walkSpeed")]
         [Header("Movement Attributes")] 
         [SerializeField] private float walkAcceleration = 5f;
-        [SerializeField] private float decelerationAcceleration = 5f;
+        [SerializeField] private float deceleration = 5f;
+        [SerializeField] private float airDeceleration = 0.1f;
+        [SerializeField] private float minSpeed = 5f;
         [SerializeField] private float speedCap = 20f;
         [SerializeField] private float jumpHeight = 1f;
         [SerializeField] private float sprintSpeed = 12f;
-        [SerializeField] private float gravity = -9.81f;
+        public float gravity = -9.81f;
         
-        private float _velocityY;
-        private Vector3 _velocityXZ;
+        [SerializeField] private float _velocityY;
+        [SerializeField] private Vector3 _velocityXZ;
 
         [Header("Ground Check")] 
         [SerializeField] private float groundCheckRadius;
@@ -27,8 +29,10 @@ namespace Player
 
         private float _pitch;
         private float _yaw;
-        [SerializeField]private float minPitch;
+        [SerializeField] private float minPitch;
         [SerializeField] private float maxPitch;
+
+        private float timeSinceLastLaunch = 0;
 
         public float HorizontalVelocity => _velocityXZ.magnitude;
 
@@ -44,6 +48,7 @@ namespace Player
         {
             HandleMovement();
             HandleRotation();
+            timeSinceLastLaunch += Time.deltaTime;
         }
 
         private void HandleMovement()
@@ -66,15 +71,28 @@ namespace Player
                 moveDir.Normalize();
 
                 // limit speed
-                float currentSpeed = _velocityXZ.magnitude >= speedCap ? speedCap : _velocityXZ.magnitude;
+                float currentSpeed;
+                if (_velocityXZ.magnitude < minSpeed)
+                {
+                    currentSpeed = minSpeed;
+                }
+                else
+                {
+                    currentSpeed = _velocityXZ.magnitude >= speedCap ? speedCap : _velocityXZ.magnitude;
+                }
+                
                 
                 // keep momentum when switching direction
                 _velocityXZ = currentSpeed * moveDir;
                 _velocityXZ += moveDir * (walkAcceleration * Time.deltaTime);
             }
-            else
+            else if (IsGrounded() && cachedInputDirection == Vector2.zero)
             {
-                _velocityXZ = Vector3.Lerp(_velocityXZ, Vector3.zero, decelerationAcceleration * Time.deltaTime);
+                _velocityXZ = Vector3.Lerp(_velocityXZ, Vector3.zero, deceleration * Time.deltaTime);
+            }
+            else if (!IsGrounded() && cachedInputDirection == Vector2.zero)
+            {
+                _velocityXZ = Vector3.Lerp(_velocityXZ, Vector3.zero, airDeceleration * Time.deltaTime);
             }
 
             if (!IsGrounded())
@@ -82,7 +100,7 @@ namespace Player
                 // adjust for gravity
                 _velocityY += gravity * Time.deltaTime;
             }
-            else
+            else if (timeSinceLastLaunch > 0.1f)
             {
                 _velocityY = 0;
             }
@@ -118,7 +136,7 @@ namespace Player
             _playerManager.CameraTarget.localRotation = Quaternion.Euler(_pitch, 0f, 0f); 
         }
 
-        private void LaunchCharacter(Vector3 velocity, bool overrideXZ = false, bool overrideY = false)
+        public void LaunchCharacter(Vector3 velocity, bool overrideXZ = false, bool overrideY = false)
         {
             if (overrideXZ)
             {
@@ -137,6 +155,8 @@ namespace Player
             {
                 _velocityY += velocity.y;
             }
+
+            timeSinceLastLaunch = 0;
         }
 
         public bool IsGrounded()

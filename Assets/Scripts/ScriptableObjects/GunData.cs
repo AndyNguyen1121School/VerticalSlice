@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ScriptableObjects
 {
@@ -8,6 +9,12 @@ namespace ScriptableObjects
         Single,
         Auto,
         Spread
+    }
+
+    public enum PushMode
+    {
+        Force,
+        Impulse
     }
 
     [Serializable]
@@ -27,5 +34,9 @@ namespace ScriptableObjects
         public int bulletCount;
         public Vector3 spreadVariance;
         public BulletData bulletData;
+        public float pushForce;
+        public float verticalMultiplier = 1f;
+        public PushMode pushMode = PushMode.Force;
+
     }
 }
