@@ -12,6 +12,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private GameObject _bulletPrefab;
     [SerializeField] private PlayerWeaponManager _weaponManager;
+    [SerializeField] private TrailRenderer _trailRenderer;
+    [SerializeField] private Animator _animator;
 
     public PlayerInputManager InputManager => inputManager;
     public PlayerMovementManager MovementManager => movementManager;
@@ -19,7 +21,9 @@ public class PlayerManager : MonoBehaviour
     public Transform CameraTarget => cameraTarget;
     public Camera Camera => _camera;
     public GameObject BulletPrefab => _bulletPrefab;
+    public TrailRenderer TrailRenderer => _trailRenderer;
     public PlayerWeaponManager WeaponManager => _weaponManager;
+    public Animator Animator => _animator;
 
     public static PlayerManager Instance;
     private void Awake()

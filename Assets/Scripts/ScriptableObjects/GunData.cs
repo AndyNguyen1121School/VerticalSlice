@@ -6,9 +6,8 @@ namespace ScriptableObjects
 {
     public enum FireMode
     {
-        Single,
-        Auto,
-        Spread
+        Hitscan,
+        Projectile
     }
 
     [Serializable]

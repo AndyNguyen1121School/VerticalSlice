@@ -31,12 +31,12 @@ namespace Player
         private float _yaw;
         [SerializeField] private float minPitch;
         [SerializeField] private float maxPitch;
-
         private float timeSinceLastLaunch = 0;
-
         public float HorizontalVelocity => _velocityXZ.magnitude;
-
         public event Action<float> onSpeedChanged;
+
+        [Header("Jump")]
+        private bool canDoubleJump;
 
         private void Awake()
         {
@@ -49,6 +49,7 @@ namespace Player
             HandleMovement();
             HandleRotation();
             timeSinceLastLaunch += Time.deltaTime;
+           
         }
 
         private void HandleMovement()
@@ -103,11 +104,18 @@ namespace Player
             else if (timeSinceLastLaunch > 0.1f)
             {
                 _velocityY = 0;
+                canDoubleJump = false;
             }
 
-            if (_playerManager.InputManager.jumpInput)
+            if (_playerManager.InputManager.jumpInput && IsGrounded())
             {
                 LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity));
+                canDoubleJump = true;
+            }
+            else if (_playerManager.InputManager.jumpInput && !IsGrounded() && canDoubleJump)
+            {
+                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity));
+                canDoubleJump = false;
             }
 
             Vector3 moveVelocity = _velocityXZ;
@@ -119,6 +127,8 @@ namespace Player
             {
                 onSpeedChanged?.Invoke(moveVelocity.magnitude);
             }
+            
+            _playerManager.Animator.SetBool("IsWalking", IsGrounded() && cachedInputDirection != Vector2.zero);
         }
 
         private void HandleRotation()

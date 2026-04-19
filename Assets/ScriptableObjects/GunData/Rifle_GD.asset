@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb126f53bf6c4c3db923e514655a070d, type: 3}
-  m_Name: Shotgun_GD
+  m_Name: Rifle_GD
   m_EditorClassIdentifier: 
-  fireMode: 1
-  ammoCapacity: 10
-  fireRate: 3
-  bulletCount: 15
-  spreadVariance: {x: 0.05, y: 0.05, z: 0.05}
-  pushForce: 30
-  verticalForce: 5
-  impulseY: 1
+  fireMode: 0
+  ammoCapacity: 300
+  fireRate: 20
+  bulletCount: 1
+  spreadVariance: {x: 0.01, y: 0.01, z: 0.01}
+  pushForce: 1
+  verticalForce: 2
+  impulseY: 0
   bulletData:
     damage: 10
     bulletSpeed: 100
-    trailColor: {r: 1, g: 0.8954717, b: 0, a: 0}
+    trailColor: {r: 1, g: 0.7741542, b: 0, a: 0}

@@ -9,13 +9,18 @@ namespace Weapons.Bullet
         private float _damage;
         [SerializeField] private float _speed;
         [SerializeField] private Rigidbody rb;
-        [SerializeField] private TrailRenderer trail;
+        public TrailRenderer trail;
         
         
         public void InitializeBulletAttributes(BulletData bulletData)
         {
             _damage = bulletData.damage;
-            _speed = bulletData.bulletSpeed + PlayerManager.Instance.MovementManager.HorizontalVelocity * 1.5f;
+
+            if (Vector3.Dot(transform.forward, PlayerManager.Instance.CharacterController.velocity) > 0.5)
+                _speed = bulletData.bulletSpeed + PlayerManager.Instance.MovementManager.HorizontalVelocity * 1.5f;
+            else
+                _speed = bulletData.bulletSpeed;
+            
             trail.startColor = bulletData.trailColor;
         }
 

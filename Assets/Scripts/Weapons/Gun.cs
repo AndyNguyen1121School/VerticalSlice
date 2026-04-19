@@ -42,31 +42,19 @@ namespace Weapons
                 return;
 
             timeSinceLastShot = 0;
+
+            if (gunData.fireMode == FireMode.Projectile)
+            {
+                SpawnPhysicalBullets(gunData);
+            }
+            else
+            {
+                HandleHitscan(gunData);
+            }
             
-            for (int i = 0; i < gunData.bulletCount; ++i)
-            {
-                Vector3 randomSpread = GetSpreadDirection();
-                Vector3 endPos = playerManager.WeaponManager.gunTip.position + randomSpread * 100f;
-                Quaternion spawnDirection = Quaternion.LookRotation((endPos - playerManager.WeaponManager.gunTip.position).normalized);
-                BulletManager bullet = Instantiate(playerManager.BulletPrefab, playerManager.WeaponManager.gunTip.position, spawnDirection).GetComponent<BulletManager>();
-                bullet.InitializeBulletAttributes(gunData.bulletData);
-            }
+            HandleLaunching(gunData);
 
-            if (_canPush)
-            {
-                Vector3 finalPushVelocity = -PlayerManager.Instance.Camera.transform.forward * gunData.pushForce;
-                
-                if (gunData.impulseY)
-                {
-                    finalPushVelocity.y = Mathf.Sqrt(-2 * gunData.verticalForce * playerManager.MovementManager.gravity);
-                }
-                else
-                {
-                    finalPushVelocity.y += gunData.verticalForce;
-                }
-
-                PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
-            }
+         
         }
 
         public override void AttackCanceled(PlayerWeaponManager playerWeaponManager)
@@ -82,6 +70,72 @@ namespace Weapons
         public override void CancelSecondary(PlayerWeaponManager playerWeaponManager)
         {
             _canPush = false;
+        }
+
+        private void HandleHitscan(GunData gundata)
+        {
+            RaycastHit hit;
+            Vector3 startPos = PlayerManager.Instance.WeaponManager.gunTip.position;
+            Vector3 endPos;
+            Vector3 dir = GetSpreadDirection();
+
+
+            if (Physics.Raycast(PlayerManager.Instance.Camera.transform.position,
+                    dir,
+                    out hit,
+                    100))
+            {
+                endPos = hit.point;
+            }
+            else
+            {
+                endPos = startPos + dir * 100;
+            }
+            
+            TrailRenderer trailRenderer = Instantiate(PlayerManager.Instance.TrailRenderer, startPos, Quaternion.identity);
+            if (trailRenderer != null)
+            {
+                trailRenderer.AddPosition(startPos);
+                trailRenderer.transform.position = endPos;
+                Destroy(trailRenderer.gameObject, 0.1f);
+            }
+        }
+
+        private void SpawnPhysicalBullets(GunData gunData)
+        {
+            for (int i = 0; i < gunData.bulletCount; ++i)
+            {
+                Vector3 randomSpread = GetSpreadDirection();
+                Vector3 endPos = playerManager.WeaponManager.gunTip.position + randomSpread * 100f;
+                Quaternion spawnDirection = Quaternion.LookRotation((endPos - playerManager.WeaponManager.gunTip.position).normalized);
+                BulletManager bullet = playerManager.WeaponManager.bulletPool.Get();
+                bullet.transform.rotation = spawnDirection;
+                bullet.gameObject.transform.position = playerManager.WeaponManager.gunTip.position;
+                bullet.InitializeBulletAttributes(gunData.bulletData);
+                bullet.trail.emitting = true;
+            }
+        }
+
+        private void HandleLaunching(GunData gundata)
+        {
+            if (!_canPush)
+                return;
+        
+            Vector3 finalPushVelocity = -PlayerManager.Instance.Camera.transform.forward;
+            finalPushVelocity.y = 0;
+            finalPushVelocity.Normalize();
+            finalPushVelocity *= gunData.pushForce;
+            
+            if (gunData.impulseY)
+            {
+                finalPushVelocity.y = Mathf.Sqrt(-2 * gunData.verticalForce * playerManager.MovementManager.gravity);
+            }
+            else
+            {
+                finalPushVelocity.y += gunData.verticalForce;
+            }
+
+            PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
             
         }
 

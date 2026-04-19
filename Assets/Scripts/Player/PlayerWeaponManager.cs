@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Weapons;
+using UnityEngine.Pool;
+using Weapons.Bullet;
+
 
 namespace Player
 {
@@ -12,14 +16,52 @@ namespace Player
         public Transform gunTip;
         private PlayerManager playerManager;
 
+        public ObjectPool<BulletManager> bulletPool;
+
         private void Awake()
         {
             if (Weapons.Count > 0)
             {
                 EquipWeapon(0);
             }
+
+            bulletPool = new ObjectPool<BulletManager>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 400, 5000);
         }
 
+        #region ObjectPool
+
+        private BulletManager CreatePooledItem()
+        {
+            BulletManager bullet = Instantiate(playerManager.BulletPrefab).GetComponent<BulletManager>();
+            bullet.trail.emitting = false;
+            return bullet;
+        }
+
+        private void OnTakeFromPool(BulletManager bullet)
+        {
+            bullet.trail.Clear();
+            bullet.gameObject.SetActive(true);
+            StartCoroutine(ReturnToPool(bullet, 5f));
+        }
+        private void OnReturnedToPool(BulletManager bullet)
+        {
+            bullet.gameObject.SetActive(false);
+            bullet.trail.emitting = false;
+            bullet.trail.Clear();
+        }
+        private void OnDestroyPoolObject(BulletManager bullet)
+        {
+            Destroy(bullet);
+        }
+
+        private IEnumerator ReturnToPool(BulletManager bullet, float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            bulletPool.Release(bullet);
+        }
+
+        #endregion
+        
         private void Start()
         {
             playerManager = PlayerManager.Instance;
