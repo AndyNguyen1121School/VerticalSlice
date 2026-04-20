@@ -14,7 +14,7 @@ namespace Weapons
             playerManager= PlayerManager.Instance;
         }
 
-        public abstract void Attack(PlayerWeaponManager playerWeaponManager);
+        public abstract bool Attack(PlayerWeaponManager playerWeaponManager);
         public abstract void AttackCanceled(PlayerWeaponManager playerWeaponManager);
 
         public abstract void ActivateSecondary(PlayerWeaponManager playerWeaponManager);

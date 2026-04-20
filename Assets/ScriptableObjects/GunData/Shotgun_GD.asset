@@ -24,3 +24,4 @@ MonoBehaviour:
     damage: 10
     bulletSpeed: 100
     trailColor: {r: 1, g: 0.8954717, b: 0, a: 0}
+  screenShakeForce: 3

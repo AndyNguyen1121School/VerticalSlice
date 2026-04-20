@@ -6,13 +6,17 @@ namespace Weapons
     public class SingleShotGun : Gun
     {
         private bool hasShot;
-        public override void Attack(PlayerWeaponManager playerWeaponManager)
+        public override bool Attack(PlayerWeaponManager playerWeaponManager)
         {
             if (hasShot)
-                return;
-            
-            base.Attack(playerWeaponManager);
-            hasShot = true;
+                return false;
+
+            bool result = base.Attack(playerWeaponManager);
+
+            if (result)
+                hasShot = true;
+
+            return result;
         }
 
         public override void AttackCanceled(PlayerWeaponManager playerWeaponManager)

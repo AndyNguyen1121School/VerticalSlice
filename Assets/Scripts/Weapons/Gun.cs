@@ -13,6 +13,7 @@ namespace Weapons
         [SerializeField] protected GunData gunData;
         [SerializeField] protected bool _canPush = false;
         private float timeSinceLastShot;
+        public Transform gunTip;
 
         private void OnEnable()
         {
@@ -36,25 +37,26 @@ namespace Weapons
             timeSinceLastShot += Time.deltaTime;
         }
 
-        public override void Attack(PlayerWeaponManager playerWeaponManager)
+        public override bool Attack(PlayerWeaponManager playerWeaponManager)
         {
             if (timeSinceLastShot <  1 / gunData.fireRate)
-                return;
+                return false;
 
             timeSinceLastShot = 0;
 
             if (gunData.fireMode == FireMode.Projectile)
             {
-                SpawnPhysicalBullets(gunData);
+                SpawnPhysicalBullets();
             }
             else
             {
-                HandleHitscan(gunData);
+                HandleHitscan();
             }
             
-            HandleLaunching(gunData);
+            HandleLaunching();
+            ActivateCameraShake();  
 
-         
+            return true;
         }
 
         public override void AttackCanceled(PlayerWeaponManager playerWeaponManager)
@@ -72,7 +74,7 @@ namespace Weapons
             _canPush = false;
         }
 
-        private void HandleHitscan(GunData gundata)
+        private void HandleHitscan()
         {
             RaycastHit hit;
             Vector3 startPos = PlayerManager.Instance.WeaponManager.gunTip.position;
@@ -97,11 +99,11 @@ namespace Weapons
             {
                 trailRenderer.AddPosition(startPos);
                 trailRenderer.transform.position = endPos;
-                Destroy(trailRenderer.gameObject, 0.1f);
+                Destroy(trailRenderer.gameObject, trailRenderer.time);
             }
         }
 
-        private void SpawnPhysicalBullets(GunData gunData)
+        private void SpawnPhysicalBullets()
         {
             for (int i = 0; i < gunData.bulletCount; ++i)
             {
@@ -116,7 +118,7 @@ namespace Weapons
             }
         }
 
-        private void HandleLaunching(GunData gundata)
+        private void HandleLaunching()
         {
             if (!_canPush)
                 return;
@@ -155,6 +157,10 @@ namespace Weapons
             }
 
             return direction;
+        }
+        private void ActivateCameraShake()
+        {
+            playerManager.ImpulseSource.GenerateImpulseWithForce(gunData.screenShakeForce);
         }
 
         private void OnDisable()

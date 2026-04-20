@@ -19,8 +19,11 @@ namespace Weapons.Bullet
             if (Vector3.Dot(transform.forward, PlayerManager.Instance.CharacterController.velocity) > 0.5)
                 _speed = bulletData.bulletSpeed + PlayerManager.Instance.MovementManager.HorizontalVelocity * 1.5f;
             else
+            {
                 _speed = bulletData.bulletSpeed;
-            
+                Debug.Log("Slow down");
+            }
+
             trail.startColor = bulletData.trailColor;
         }
 

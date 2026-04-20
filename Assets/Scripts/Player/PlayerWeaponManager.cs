@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using ScriptableObjects;
 using UnityEngine;
 using Weapons;
 using UnityEngine.Pool;
@@ -34,6 +36,7 @@ namespace Player
         {
             BulletManager bullet = Instantiate(playerManager.BulletPrefab).GetComponent<BulletManager>();
             bullet.trail.emitting = false;
+            bullet.trail.Clear();
             return bullet;
         }
 
@@ -69,6 +72,7 @@ namespace Player
             playerManager.InputManager.OnAttackCanceled += CancelAttack;
             playerManager.InputManager.OnSecondaryPerformed += ActivateSecondary;
             playerManager.InputManager.OnSecondaryCanceled += CancelSecondary;
+            playerManager.InputManager.OnWeaponSwitching += EquipWeapon;
         }
 
         private void OnDisable()
@@ -89,9 +93,20 @@ namespace Player
 
         private void EquipWeapon(int index)
         {
+            foreach (var weapon in Weapons)
+            {
+                weapon.gameObject.SetActive(false);    
+            }
+            
             if (Weapons.Count > index)
             {
                 currentWeapon = Weapons[index];
+                currentWeapon.gameObject.SetActive(true);
+
+                if (currentWeapon is Gun gun)
+                {
+                    gunTip = gun.gunTip;
+                }
             }
         }
 
@@ -126,5 +141,7 @@ namespace Player
                 currentWeapon.CancelSecondary(this);
             }
         }
+
+       
     }
 }

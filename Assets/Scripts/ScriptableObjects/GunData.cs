@@ -30,6 +30,7 @@ namespace ScriptableObjects
         public float verticalForce;
         public bool impulseY = false;
         public BulletData bulletData;
+        public float screenShakeForce = 1f;
 
     }
 }

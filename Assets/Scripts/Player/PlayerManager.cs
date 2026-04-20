@@ -1,4 +1,5 @@
 ﻿using System;
+using Cinemachine;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,6 +15,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private PlayerWeaponManager _weaponManager;
     [SerializeField] private TrailRenderer _trailRenderer;
     [SerializeField] private Animator _animator;
+    [SerializeField] private CinemachineImpulseSource _impulseSource;
 
     public PlayerInputManager InputManager => inputManager;
     public PlayerMovementManager MovementManager => movementManager;
@@ -24,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     public TrailRenderer TrailRenderer => _trailRenderer;
     public PlayerWeaponManager WeaponManager => _weaponManager;
     public Animator Animator => _animator;
+    public CinemachineImpulseSource ImpulseSource => _impulseSource;
+    
 
     public static PlayerManager Instance;
     private void Awake()

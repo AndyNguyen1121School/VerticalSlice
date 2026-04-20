@@ -23,6 +23,7 @@ namespace Player
         [HideInInspector] public event Action OnAttackCanceled;
         [HideInInspector] public event Action OnSecondaryPerformed;
         [HideInInspector] public event Action OnSecondaryCanceled;
+        [HideInInspector] public event Action<int> OnWeaponSwitching;
 
         private void Start()
         {
@@ -45,6 +46,8 @@ namespace Player
             PlayerInput.actions["Attack"].canceled += HandleAttackCanceled;
             PlayerInput.actions["Secondary"].started += HandleSecondaryStarted;
             PlayerInput.actions["Secondary"].canceled += HandleSecondaryCanceled;
+            PlayerInput.actions["Weapon1"].started += Weapon1Handler;
+            PlayerInput.actions["Weapon2"].started += Weapon2Handler;
             
         }
 
@@ -58,6 +61,8 @@ namespace Player
             PlayerInput.actions["Attack"].canceled -= HandleAttackCanceled;
             PlayerInput.actions["Secondary"].started -= HandleSecondaryStarted;
             PlayerInput.actions["Secondary"].canceled -= HandleSecondaryCanceled;
+            PlayerInput.actions["Weapon1"].started -= Weapon1Handler;
+            PlayerInput.actions["Weapon2"].started -= Weapon2Handler;
         }
 
         private void OnMove(InputAction.CallbackContext ctx)
@@ -95,6 +100,16 @@ namespace Player
         {
             secondaryInput = false;
             OnSecondaryCanceled?.Invoke();
+        }
+
+        private void Weapon1Handler(InputAction.CallbackContext ctx)
+        {
+            OnWeaponSwitching?.Invoke(0);
+        }
+        
+        private void Weapon2Handler(InputAction.CallbackContext ctx)
+        {
+            OnWeaponSwitching?.Invoke(1);
         }
     }
 }

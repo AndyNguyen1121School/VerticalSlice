@@ -129,6 +129,7 @@ namespace Player
             }
             
             _playerManager.Animator.SetBool("IsWalking", IsGrounded() && cachedInputDirection != Vector2.zero);
+            _playerManager.Animator.SetFloat("WalkingMultiplier", 1 + (_velocityXZ.magnitude * 0.01f));
         }
 
         private void HandleRotation()
