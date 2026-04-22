@@ -38,7 +38,7 @@ namespace Weapons
                 Debug.LogError("No gun data assigned.");
             }
 
-            animationClips = AnimationUtility.GetAnimationClips(gameObject);
+            animationClips = gunAnimator.runtimeAnimatorController.animationClips;
         }
 
         private void Update()
