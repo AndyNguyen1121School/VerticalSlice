@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using Interface;
 using Player;
 using ScriptableObjects;
+using UnityEditor;
 using UnityEngine;
 using Weapons.Bullet;
 using Random = UnityEngine.Random;
@@ -12,8 +15,12 @@ namespace Weapons
     {
         [SerializeField] protected GunData gunData;
         [SerializeField] protected bool _canPush = false;
+        [SerializeField] private Animator gunAnimator;
         private float timeSinceLastShot;
         public Transform gunTip;
+        private AnimationClip[] animationClips;
+        public string shootAnimationName;
+        
 
         private void OnEnable()
         {
@@ -30,6 +37,8 @@ namespace Weapons
             {
                 Debug.LogError("No gun data assigned.");
             }
+
+            animationClips = AnimationUtility.GetAnimationClips(gameObject);
         }
 
         private void Update()
@@ -55,6 +64,8 @@ namespace Weapons
             
             HandleLaunching();
             ActivateCameraShake();  
+            PlayShootAnimation();
+            
 
             return true;
         }
@@ -74,33 +85,9 @@ namespace Weapons
             _canPush = false;
         }
 
-        private void HandleHitscan()
+        public virtual void HandleHitscan()
         {
-            RaycastHit hit;
-            Vector3 startPos = PlayerManager.Instance.WeaponManager.gunTip.position;
-            Vector3 endPos;
-            Vector3 dir = GetSpreadDirection();
-
-
-            if (Physics.Raycast(PlayerManager.Instance.Camera.transform.position,
-                    dir,
-                    out hit,
-                    100))
-            {
-                endPos = hit.point;
-            }
-            else
-            {
-                endPos = startPos + dir * 100;
-            }
-            
-            TrailRenderer trailRenderer = Instantiate(PlayerManager.Instance.TrailRenderer, startPos, Quaternion.identity);
-            if (trailRenderer != null)
-            {
-                trailRenderer.AddPosition(startPos);
-                trailRenderer.transform.position = endPos;
-                Destroy(trailRenderer.gameObject, trailRenderer.time);
-            }
+           
         }
 
         private void SpawnPhysicalBullets()
@@ -113,8 +100,9 @@ namespace Weapons
                 BulletManager bullet = playerManager.WeaponManager.bulletPool.Get();
                 bullet.transform.rotation = spawnDirection;
                 bullet.gameObject.transform.position = playerManager.WeaponManager.gunTip.position;
+                bullet.DisableTrailRenderer();
                 bullet.InitializeBulletAttributes(gunData.bulletData);
-                bullet.trail.emitting = true;
+                bullet.EnableTrailRenderer();
             }
         }
 
@@ -141,7 +129,7 @@ namespace Weapons
             
         }
 
-        private Vector3 GetSpreadDirection()
+        protected Vector3 GetSpreadDirection()
         {
             Vector3 direction = playerManager.Camera.transform.forward;
 
@@ -163,6 +151,29 @@ namespace Weapons
             playerManager.ImpulseSource.GenerateImpulseWithForce(gunData.screenShakeForce);
         }
 
+        private float GetAnimationClipLength(string name)
+        {
+            foreach (var clip in animationClips)
+            {
+                if (clip.name == name)
+                {
+                    return clip.length;
+                }
+            }
+            Debug.LogError("Animation clip " + name + " does not exist");
+            return -1;
+        }
+
+        private void PlayShootAnimation()
+        {
+            float cachedClipLength = GetAnimationClipLength(shootAnimationName);
+            if (cachedClipLength < 0)
+                return;
+
+            gunAnimator.speed = cachedClipLength / (1  / gunData.fireRate);
+            gunAnimator.Play("Shoot", 0, 0);
+        }
+        
         private void OnDisable()
         {
             _canPush = false;

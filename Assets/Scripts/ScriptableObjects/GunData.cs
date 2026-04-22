@@ -15,7 +15,7 @@ namespace ScriptableObjects
     {
         public float damage;
         public float bulletSpeed;
-        public Color trailColor;
+        public Gradient trailColor;
     }
     
     [CreateAssetMenu(fileName = "GunData", menuName = "New GunData", order = 0)]

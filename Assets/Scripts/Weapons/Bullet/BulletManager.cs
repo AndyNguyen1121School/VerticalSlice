@@ -1,4 +1,5 @@
 ﻿using System;
+using Interface;
 using ScriptableObjects;
 using UnityEngine;
 
@@ -9,8 +10,19 @@ namespace Weapons.Bullet
         private float _damage;
         [SerializeField] private float _speed;
         [SerializeField] private Rigidbody rb;
+        [SerializeField] private float rayLength = 1f;
         public TrailRenderer trail;
-        
+        private float _cachedTime;
+        [SerializeField] private LayerMask whatIsDamageable;
+        [SerializeField] private ParticleSystem bulletParticle;
+        [SerializeField] private Gradient trailColor;
+        [SerializeField] private float velocityScale = 1f;
+
+        private void Awake()
+        {
+            _cachedTime = trail.time;
+        }
+
         
         public void InitializeBulletAttributes(BulletData bulletData)
         {
@@ -24,12 +36,62 @@ namespace Weapons.Bullet
                 Debug.Log("Slow down");
             }
 
-            trail.startColor = bulletData.trailColor;
+            trailColor = bulletData.trailColor;
+        }
+
+        private void Update()
+        {
+            HandleBulletCollisions();
         }
 
         private void FixedUpdate()
         {
             rb.MovePosition(transform.position + (_speed * Time.fixedDeltaTime * transform.forward));
+        }
+
+        public void HandleBulletCollisions()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.forward, out hit, rayLength * (rb.velocity.magnitude * velocityScale),
+                    whatIsDamageable))
+            {
+                IDamageable damageScript;
+                if (hit.collider.TryGetComponent<IDamageable>(out damageScript))
+                {
+                    damageScript.Damage(_damage);
+                }
+                ActivateParticle();
+                gameObject.SetActive(false);
+            }
+        }
+
+        private void ActivateParticle()
+        {
+            ParticleSystem particle = Instantiate(bulletParticle, transform.position, Quaternion.identity);
+            ParticleSystem.MainModule main = particle.main;
+            main.startColor = trailColor;
+        }
+
+        public void DisableTrailRenderer()
+        {
+            trail.time = 0;
+            trail.Clear();
+        }
+
+        public void EnableTrailRenderer()
+        {
+            trail.time = _cachedTime;
+        }
+        
+        void OnDrawGizmos()
+        {
+            if (rb == null) return;
+
+            Gizmos.color = Color.red;
+            float length = rayLength * (rb.velocity.magnitude * velocityScale);
+            Vector3 direction = transform.forward * length;
+
+            Gizmos.DrawLine(transform.position, transform.position + direction);
         }
     }
 }

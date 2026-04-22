@@ -7,7 +7,7 @@ namespace Player
     public class PlayerInputManager : MonoBehaviour
     {
         [Header("Assign in Inspector")] [SerializeField]
-        private PlayerInput PlayerInput;
+        public PlayerInput PlayerInput;
 
         [Header("Input Info")]
         public float sensitivity;

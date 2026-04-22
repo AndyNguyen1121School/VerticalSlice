@@ -26,7 +26,7 @@ namespace Player
             {
                 EquipWeapon(0);
             }
-
+            
             bulletPool = new ObjectPool<BulletManager>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 400, 5000);
         }
 
@@ -35,21 +35,19 @@ namespace Player
         private BulletManager CreatePooledItem()
         {
             BulletManager bullet = Instantiate(playerManager.BulletPrefab).GetComponent<BulletManager>();
-            bullet.trail.emitting = false;
-            bullet.trail.Clear();
+            bullet.DisableTrailRenderer();
             return bullet;
         }
 
         private void OnTakeFromPool(BulletManager bullet)
         {
-            bullet.trail.Clear();
+            bullet.DisableTrailRenderer();
             bullet.gameObject.SetActive(true);
             StartCoroutine(ReturnToPool(bullet, 5f));
         }
         private void OnReturnedToPool(BulletManager bullet)
         {
-            bullet.gameObject.SetActive(false);
-            bullet.trail.emitting = false;
+            bullet.DisableTrailRenderer();
             bullet.trail.Clear();
         }
         private void OnDestroyPoolObject(BulletManager bullet)
