@@ -33,7 +33,6 @@ namespace Weapons.Bullet
             else
             {
                 _speed = bulletData.bulletSpeed;
-                Debug.Log("Slow down");
             }
 
             trailColor = bulletData.trailColor;

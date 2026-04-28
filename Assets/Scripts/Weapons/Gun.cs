@@ -125,7 +125,7 @@ namespace Weapons
                 finalPushVelocity.y += gunData.verticalForce;
             }
 
-            PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, false);
+            PlayerManager.Instance.MovementManager.LaunchCharacter(finalPushVelocity, false, gunData.impulseY);
             
         }
 
