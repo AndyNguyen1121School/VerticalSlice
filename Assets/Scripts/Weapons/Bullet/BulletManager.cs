@@ -17,6 +17,7 @@ namespace Weapons.Bullet
         [SerializeField] private ParticleSystem bulletParticle;
         [SerializeField] private Gradient trailColor;
         [SerializeField] private float velocityScale = 1f;
+        [SerializeField] private Vector3 rayOffset;
 
         private void Awake()
         {
@@ -51,7 +52,12 @@ namespace Weapons.Bullet
         public void HandleBulletCollisions()
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, rayLength * (rb.velocity.magnitude * velocityScale),
+            Vector3 origin = transform.position +
+                             transform.right * rayOffset.x +
+                             transform.up * rayOffset.y +
+                             transform.forward * rayOffset.z;
+            
+            if (Physics.Raycast(origin, transform.forward, out hit, rayLength * (rb.velocity.magnitude * velocityScale),
                     whatIsDamageable))
             {
                 IDamageable damageScript;
@@ -86,11 +92,15 @@ namespace Weapons.Bullet
         {
             if (rb == null) return;
 
-            Gizmos.color = Color.red;
-            float length = rayLength * (rb.velocity.magnitude * velocityScale);
-            Vector3 direction = transform.forward * length;
+            Vector3 origin = transform.position +
+                             transform.right * rayOffset.x +
+                             transform.up * rayOffset.y +
+                             transform.forward * rayOffset.z;
+            Vector3 direction = transform.forward;
+            float distance = rayLength * (rb.velocity.magnitude * velocityScale);
 
-            Gizmos.DrawLine(transform.position, transform.position + direction);
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(origin, direction * distance);
         }
     }
 }

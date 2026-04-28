@@ -6,8 +6,8 @@ namespace GameManagers
 {
     public class GameManager : MonoBehaviour
     {
-        private static int TotalEnemies = 0;
-        private static int EnemiesKilled = 0;
+        private int TotalEnemies = 0;
+        private int EnemiesKilled = 0;
 
         public static GameManager Instance;
         public event Action<int, int> OnUpdateEnemyUI;
@@ -22,6 +22,7 @@ namespace GameManagers
             {
                 Destroy(gameObject);
             }
+            
             EnemyManager.OnEnemySpawned += EnemySpawned;
             EnemyManager.OnEnemyKilled += EnemyKilled;
         }
@@ -37,6 +38,12 @@ namespace GameManagers
             EnemiesKilled++;
             PlayerManager.Instance.MovementManager.speedCap = Mathf.Min( PlayerManager.Instance.MovementManager.speedCap + 2, 40);
             OnUpdateEnemyUI?.Invoke(EnemiesKilled, TotalEnemies);
+        }
+
+        private void OnDisable()
+        {
+            EnemyManager.OnEnemySpawned -= EnemySpawned;
+            EnemyManager.OnEnemyKilled -= EnemyKilled;
         }
     }
 }

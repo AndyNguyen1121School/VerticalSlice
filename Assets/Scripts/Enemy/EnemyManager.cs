@@ -29,8 +29,8 @@ namespace Enemy
 
         private void Start()
         {
-            retreatLocation = transform.position;
             OnEnemySpawned?.Invoke(this);
+            retreatLocation = transform.position;
             agent.updateRotation = false;
         }
 

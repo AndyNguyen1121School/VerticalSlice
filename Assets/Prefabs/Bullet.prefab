@@ -214,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 0
   rb: {fileID: -5308837776587130607}
-  rayLength: 0.25
+  rayLength: 0.4
   trail: {fileID: 7986153494987421971}
   whatIsDamageable:
     serializedVersion: 2
@@ -252,6 +252,7 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   velocityScale: 0.1
+  rayOffset: {x: 0, y: 0, z: -4}
 --- !u!54 &-5308837776587130607
 Rigidbody:
   m_ObjectHideFlags: 0

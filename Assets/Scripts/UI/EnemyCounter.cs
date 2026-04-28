@@ -9,7 +9,7 @@ namespace UI
     {
         [SerializeField] private TextMeshProUGUI enemyCounter;
 
-        private void Start()
+        private void Awake()
         {
             GameManager.Instance.OnUpdateEnemyUI += UpdateEnemyCounter;
         }
@@ -17,6 +17,11 @@ namespace UI
         private void UpdateEnemyCounter(int enemiesKilled, int totalEnemies)
         {
             enemyCounter.text = "Enemies: " + enemiesKilled + " / " + totalEnemies;
+        }
+
+        private void OnDisable()
+        {
+            GameManager.Instance.OnUpdateEnemyUI -= UpdateEnemyCounter;
         }
     }
 }
