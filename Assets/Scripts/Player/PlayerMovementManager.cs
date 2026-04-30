@@ -109,12 +109,12 @@ namespace Player
 
             if (_playerManager.InputManager.jumpInput && IsGrounded())
             {
-                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity));
+                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity), false, true);
                 canDoubleJump = true;
             }
             else if (_playerManager.InputManager.jumpInput && !IsGrounded() && canDoubleJump)
             {
-                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity));
+                LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity), false, true);
                 canDoubleJump = false;
             }
 

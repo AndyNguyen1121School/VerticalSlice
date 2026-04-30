@@ -703,6 +703,8 @@ MonoBehaviour:
   agent: {fileID: 5704449555977630571}
   animator: {fileID: 4105212110790047593}
   rotationSpeed: 5
+  minimumDistanceToAttack: 3
+  canAttack: 1
 --- !u!114 &5630321928133681299
 MonoBehaviour:
   m_ObjectHideFlags: 0
