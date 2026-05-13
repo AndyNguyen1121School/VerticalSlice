@@ -36,7 +36,7 @@ namespace Player
         public event Action<float> onSpeedChanged;
 
         [Header("Jump")]
-        private bool canDoubleJump;
+        [SerializeField] bool canDoubleJump;
 
         private void Awake()
         {
@@ -101,7 +101,7 @@ namespace Player
                 // adjust for gravity
                 _velocityY += gravity * Time.deltaTime;
             }
-            else if (timeSinceLastLaunch > 0.1f)
+            else if (timeSinceLastLaunch > 0.2f)
             {
                 _velocityY = 0;
                 canDoubleJump = false;
@@ -112,7 +112,7 @@ namespace Player
                 LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity), false, true);
                 canDoubleJump = true;
             }
-            else if (_playerManager.InputManager.jumpInput && !IsGrounded() && canDoubleJump)
+            else if (_playerManager.InputManager.jumpInput && !IsGrounded() && canDoubleJump && timeSinceLastLaunch > 0.1f)
             {
                 LaunchCharacter(Vector3.up * Mathf.Sqrt(-2 * jumpHeight * gravity), false, true);
                 canDoubleJump = false;
@@ -139,8 +139,8 @@ namespace Player
 
             Vector2 input = _playerManager.InputManager.MouseInput;
 
-            _yaw += input.x * _playerManager.InputManager.sensitivity;
-            _pitch -= input.y * _playerManager.InputManager.sensitivity;
+            _yaw += input.x;
+            _pitch -= input.y;
             _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
 
             transform.rotation = Quaternion.Euler(0, _yaw, 0f);

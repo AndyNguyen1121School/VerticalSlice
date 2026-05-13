@@ -29,6 +29,13 @@ namespace Player
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            if (!PlayerPrefs.HasKey("Sensitivity"))
+            {
+                PlayerPrefs.SetFloat("Sensitivity", 0.12f);
+                PlayerPrefs.Save();
+            }
+            sensitivity = PlayerPrefs.GetFloat("Sensitivity");
         }
 
         private void Update()
@@ -75,7 +82,7 @@ namespace Player
         }
         private void OnLook(InputAction.CallbackContext ctx)
         {
-            mouseInput = ctx.ReadValue<Vector2>();
+            mouseInput = ctx.ReadValue<Vector2>() * sensitivity;
         }
         
         private void HandleAttackPerformed(InputAction.CallbackContext ctx)
@@ -110,6 +117,11 @@ namespace Player
         private void Weapon2Handler(InputAction.CallbackContext ctx)
         {
             OnWeaponSwitching?.Invoke(1);
+        }
+
+        public void ResetMouseInput()
+        {
+            mouseInput = Vector2.zero;
         }
     }
 }

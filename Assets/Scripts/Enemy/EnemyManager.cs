@@ -14,6 +14,8 @@ namespace Enemy
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Animator animator;
         [SerializeField] private float rotationSpeed = 5f;
+
+        [SerializeField] private ColliderComponent attackCollider;
         
         private float health = 100f;
         private float maxHealth = 100f;
@@ -23,6 +25,7 @@ namespace Enemy
         [Header("Attack Settings")] 
         [SerializeField] private float minimumDistanceToAttack;
         public bool canAttack = true;
+        public bool canDamage = true;
 
         private void Awake()
         {
@@ -34,6 +37,13 @@ namespace Enemy
             OnEnemySpawned?.Invoke(this);
             retreatLocation = transform.position;
             agent.updateRotation = false;
+
+            attackCollider.OnCollisionStay += HandleAttackCollisions;
+        }
+
+        private void OnDisable()
+        {
+            attackCollider.OnCollisionStay -= HandleAttackCollisions;
         }
 
         private void Update()
@@ -127,6 +137,26 @@ namespace Enemy
         public void DeactivateMovement()
         {
             agent.isStopped = true;
+        }
+
+        public void HandleAttackCollisions(Collider other)
+        {
+            if (other.CompareTag("Player") && canDamage)
+            {
+                IDamageable damageable = other.GetComponent<IDamageable>();
+                damageable.Damage(1);
+                canDamage = false;
+            }
+        }
+
+        public void TurnOnHitbox()
+        {
+            canDamage = true;
+        }
+
+        public void TurnOffHitbox()
+        {
+            canDamage = false;
         }
 
     }

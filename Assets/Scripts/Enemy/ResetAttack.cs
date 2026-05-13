@@ -21,6 +21,7 @@ namespace Enemy
                 return;
 
             _enemyManager.canAttack = true;
+            _enemyManager.canDamage = false;
             _enemyManager.ActivateMovement();
         }
 

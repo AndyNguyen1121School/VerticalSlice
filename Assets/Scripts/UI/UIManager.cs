@@ -11,7 +11,23 @@ public class UIManager : MonoBehaviour
 {
    [SerializeField] private GameObject timer;
    [SerializeField] private TextMeshProUGUI gameoverTimerText;
+   [SerializeField] private TextMeshProUGUI deathMenuTimerText;
    public GameObject gameoverMenu;
+   public GameObject deathMenu;
+
+   public static UIManager instance;
+
+   private void Awake()
+   {
+      if (instance == null)
+      {
+         instance = this;
+      }
+      else
+      {
+         Destroy(gameObject);
+      }
+   }
 
    private void Start()
    {
@@ -31,6 +47,18 @@ public class UIManager : MonoBehaviour
          PlayerManager.Instance.InputManager.PlayerInput.DeactivateInput();
          PlayerManager.Instance.MovementManager.enabled = false;
       }
+   }
+
+   public void ActivateDeathScreen()
+   {
+      deathMenu.SetActive(true);
+      float finalTime = (float)Variables.Object(timer).Get("Time");
+      deathMenuTimerText.text = "Time: " + $"{finalTime:F2}";
+      Cursor.lockState = CursorLockMode.None;
+      Cursor.visible = true;
+      Time.timeScale = 0;
+      PlayerManager.Instance.InputManager.PlayerInput.DeactivateInput();
+      PlayerManager.Instance.MovementManager.enabled = false;
    }
 
    public void RestartScene()
