@@ -31,7 +31,7 @@ To check these transitions, the EnemyManager has helper functions written in C# 
 ![alt text](image-2.png)
 ![alt text](image-3.png)
 
-4. The Unity feature I would like top be graded is my enemy behavior. Particularly how they react to the player when they get close enough and whether their attacks affect the enemy. Additionally, on death, the player's camera should fall off their body and roll around.
+4. The Unity feature I would like top be graded is my enemy behavior. Particularly how they react to the player when they get close enough and whether their attacks affect the player. Additionally, on death, the player's camera should fall off their body and roll around.
 
 
 ## Milestone 3 Devlog
