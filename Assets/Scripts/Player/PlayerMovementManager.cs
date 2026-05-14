@@ -15,8 +15,7 @@ namespace Player
         [SerializeField] private float airDeceleration = 0.1f;
         [SerializeField] private float minSpeed = 5f;
         [SerializeField] public float speedCap = 20f;
-        [SerializeField] private float jumpHeight = 1f;
-        [SerializeField] private float sprintSpeed = 12f;
+        [SerializeField] private float jumpHeight = 1f; 
         public float gravity = -9.81f;
         
         [SerializeField] private float _velocityY;

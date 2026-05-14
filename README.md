@@ -11,7 +11,29 @@ To check these transitions, the EnemyManager has helper functions written in C# 
 ![alt text](image.png)
 
 ## Milestone 2 Devlog
-Milestone 2 Devlog goes here.
+1.  __Have enemies attack the player__
+    - Make a script called ColliderComponent that attaches to a gameobject parented to the enemy's hand. This is used to communicate with the main enemy script to detect collisions.
+    - Attach the collider and script to the enemy.
+    - Make a StateMachineBehavior script for the enemy's animator to reset attack values to make sure they can only hit the player once per attack.
+    - Use the health interface I have previously made to damage the player
+
+    __Have the player die when attacked by enemy (Simulate head being sliced off on death)__
+    - Get a reference to the CinemachineVirtualCamera component
+    - On death, add a rigidbody and sphere collider to the camera to simulate physics
+    - Add a small force to the camera to push it off the character capsule
+    - Ensure the follow target for the VirtualCamera is null
+
+2. The task break-down helped organize my ideas into small, digestable pieces, ensuring I do not become overwhelmed. However, during the development of said feature, I realized I forgot to include many small problems I would run into. In the end, those bugs were easily fixed.
+
+3. In my timer visual graph, I have a timer variable that is accessed by the UIManager when the player completes the level or dies. This variable is being accessed in C# through (float)Variables.Object(timer).Get("Time"). Additionally, in my state machine graph, I simply call functions like HandleIdle() and HandleChaseState() from my EnemyManager script. In the EnemyManager script, I also made functions to check the distance from the player which determines their overall behavior. 
+
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+
+4. The Unity feature I would like top be graded is my enemy behavior. Particularly how they react to the player when they get close enough and whether their attacks affect the enemy. Additionally, on death, the player's camera should fall off their body and roll around.
+
+
 ## Milestone 3 Devlog
 Milestone 3 Devlog goes here.
 ## Milestone 4 Devlog
